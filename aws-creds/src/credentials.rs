@@ -198,8 +198,7 @@ impl Credentials {
 
         let credentials = Credentials::from_sts_env("aws-creds")
         .or(Credentials::from_env())
-        .or(Credentials::from_profile(profile))
-        .or(Credentials::from_instance_metadata());
+        .or(Credentials::from_profile(profile));
         return credentials;
     }
 
@@ -226,43 +225,6 @@ impl Credentials {
         Credentials::from_env_specific(None, None, None, None)
     }
 
-    pub fn from_instance_metadata() -> Result<Credentials> {
-        if !Credentials::is_ec2() {
-            return Err(anyhow!("Not an EC2 instance"));
-        }
-        let mut resp: HashMap<String, String> =
-            match env::var("AWS_CONTAINER_CREDENTIALS_RELATIVE_URI") {
-                Ok(credentials_path) => Some(
-                    attohttpc::get(&format!("http://169.254.170.2{}", credentials_path))
-                        .send()?
-                        .json()?,
-                ),
-                Err(_) => {
-                    let role = attohttpc::get(
-                        "http://169.254.169.254/latest/meta-data/iam/security-credentials",
-                    )
-                    .send()?
-                    .text()?;
-
-                    let creds = attohttpc::get(&format!(
-                        "http://169.254.169.254/latest/meta-data/iam/security-credentials/{}",
-                        role
-                    ))
-                    .send()?
-                    .json()?;
-
-                    Some(creds)
-                }
-            }
-            .unwrap();
-
-        Ok(Credentials {
-            access_key: resp.remove("AccessKeyId"),
-            secret_key: resp.remove("SecretAccessKey"),
-            security_token: resp.remove("Token"),
-            session_token: None,
-        })
-    }
 
     fn is_ec2() -> bool {
         if let Ok(uuid) = std::fs::read_to_string("/sys/hypervisor/uuid") {

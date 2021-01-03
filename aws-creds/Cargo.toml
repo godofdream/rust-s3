@@ -18,6 +18,7 @@ path = "src/lib.rs"
 anyhow = "1.0"
 dirs = "3"
 rust-ini = "0.16"
+reqwest = { git = "https://github.com/seanmonstar/reqwest", default-features = false, features = ["cookies","gzip","brotli","json"]}
 attohttpc = { version = "0.16", default-features = false, features = ["json"] }
 url = "2"
 serde-xml-rs = "0.4"
@@ -27,8 +28,8 @@ serde_derive = "1"
 
 [features]
 default = ["native-tls"]
-native-tls = ["attohttpc/tls"]
-rustls-tls = ["attohttpc/tls-rustls"]
+native-tls = ["reqwest/native-tls"]
+rustls-tls = ["reqwest/rustls-tls"]
 
 [dev-dependencies]
 env_logger = "0.8"
