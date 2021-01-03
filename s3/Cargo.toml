@@ -45,13 +45,14 @@ sha2 = "0.9"
 anyhow = "1.0"
 surf = { version = "2", optional = true, default-features = false, features = ["hyper-client"]}
 # Waiting on h2 compat
-tokio = { version = "1", features = ["stream"], optional = true, default-features = false }
+tokio = { version = "1", optional = true, default-features = false }
+tokio-stream = { version = "0.1", optional = true }
 url = "2"
 
 block_on_proc = { version = "0.1", optional = true}
 
 [features]
-with-tokio = ["reqwest", "tokio", "futures", "async-std"]
+with-tokio = ["reqwest", "tokio", "tokio-stream", "futures", "async-std"]
 with-async-std = ["async-std", "surf", "futures"]
 sync = ["attohttpc", "maybe-async/is_sync"]
 default = ["tokio-native-tls", "with-tokio"]

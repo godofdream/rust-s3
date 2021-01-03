@@ -15,7 +15,7 @@ use crate::request_trait::Request;
 use anyhow::Result;
 use anyhow::anyhow;
 
-use tokio::stream::StreamExt;
+use tokio_stream::StreamExt;
 
 
 // Temporary structure for making a request
